@@ -23,6 +23,6 @@ return {
 		})
 	end,
 	keys = {
-		{ "<leader>lf", vim.lsp.buf.format },
+		{ "<leader>ff", vim.lsp.buf.format, desc = "Format the file" },
 	},
 }
