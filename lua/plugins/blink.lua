@@ -15,7 +15,7 @@ return {
 			preset = "super-tab",
 		},
 		sources = {
-			defual = { "path", "snippets", "buffer", "lsp" },
+			default = { "path", "snippets", "buffer", "lsp" },
 		},
 		cmdline = {
 			sources = function()

@@ -8,13 +8,14 @@ return {
       flavour = "mocha",
       transparent_background = true,
       term_colors = true,
-      integratons = {
+      integrations = {
         alpha = true,
         cmp = true,
         gitsigns = true,
         lsp_trouble = true,
         nvimtree = true,
         telescope = true,
+        notify = true,
       },
     })
     vim.cmd("colorscheme catppuccin")

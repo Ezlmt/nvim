@@ -10,6 +10,9 @@ return {
 		"configure.ac",
 		".git",
 	},
+	init_options = {
+		fallbackFlags = { "-std=c++17" },
+	},
 	capabilities = {
 		textDocument = {
 			completion = {

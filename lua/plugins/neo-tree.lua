@@ -28,7 +28,7 @@ return {
         vim.cmd("Neotree toggle")       -- 打开并聚焦（已开则直接聚焦）
       end,
       desc  = "Neo-tree: Toggle + Focus",
-      mode  = { "n", "i", "v", "t" },
+      mode  = { "n" },
       noremap = true, silent = true,
     },
 
@@ -45,7 +45,7 @@ return {
         end
       end,
       desc  = "Neo-tree: Toggle tree ↔ edit",
-      mode  = { "n", "i", "v", "t" },
+      mode  = { "n" },
       noremap = true, silent = true,
     },
   },
