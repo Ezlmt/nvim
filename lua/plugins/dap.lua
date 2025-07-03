@@ -43,7 +43,7 @@ return {
 				function()
 					require("dap").set_breakpoint(vim.fn.input("Breakpoint condition > "))
 				end,
-				desc = "Debug • COnditional Breakpoint",
+				desc = "Debug • Conditional Breakpoint",
 			},
 			{
 				"<leader>dr",
@@ -60,6 +60,51 @@ return {
 				desc = "Debug • Rerun",
 			},
 		},
+    config = function ()
+      local palette_ok, palette = pcall(function()
+        return require("catppuccin.palettes").get_palette()  -- latte/frappe/…
+      end)
+      if not palette_ok then
+        palette = { red="#f38ba8", yellow="#f9e2af", sky="#89dceb",
+                    mauve="#cba6f7", green="#a6e3a1" }
+      end
+
+      ----------------------------------------------------------------
+      -- 1) 定义图标（Nerd Font）
+      ----------------------------------------------------------------
+      local icons = {
+        breakpoint          = "",
+        breakpoint_cond     = "",
+        breakpoint_rejected = "",
+        logpoint            = "󰌶",
+        stopped             = "",
+      }
+
+      ----------------------------------------------------------------
+      -- 2) sign_define：把图标塞进 SignColumn
+      ----------------------------------------------------------------
+      local sign = vim.fn.sign_define
+      sign("DapBreakpoint",          { text = icons.breakpoint,          texthl = "DapBreakpoint" })
+      sign("DapBreakpointCondition", { text = icons.breakpoint_cond,     texthl = "DapBreakpointCondition" })
+      sign("DapBreakpointRejected",  { text = icons.breakpoint_rejected, texthl = "DapBreakpointRejected" })
+      sign("DapLogPoint",            { text = icons.logpoint,            texthl = "DapLogPoint" })
+      sign("DapStopped",             { text = icons.stopped,             texthl = "DapStopped",
+                                       linehl = "DapStoppedLine", numhl = "DapStopped" })
+
+      ----------------------------------------------------------------
+      -- 3) 高亮组：用 Catppuccin 颜色
+      ----------------------------------------------------------------
+      local hl = vim.api.nvim_set_hl
+      local function define_hl()
+        hl(0, "DapBreakpoint",          { fg = palette.red,    bold = true })
+        hl(0, "DapBreakpointCondition", { fg = palette.yellow, bold = true })
+        hl(0, "DapBreakpointRejected",  { fg = palette.sky,    bold = true })
+        hl(0, "DapLogPoint",            { fg = palette.mauve,  bold = true })
+        hl(0, "DapStopped",             { fg = palette.green,  bold = true })
+        hl(0, "DapStoppedLine",         { bg = palette.surface0 })  -- 20 ≈ 12% 透明度
+      end
+      define_hl()
+    end
 	},
 	{
 		"rcarriga/nvim-dap-ui",
@@ -105,8 +150,8 @@ return {
 			"mfussenegger/nvim-dap",
 		},
 		opts = {
-			handlers = {}, -- 让你手动写 handlers；不想自动安装就留空
-			ensure_installed = {}, -- 想强制装哪个 adapter 就写进来
+			handlers = {},
+			ensure_installed = {},
 		},
 	},
 }
