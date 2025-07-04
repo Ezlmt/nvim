@@ -11,6 +11,13 @@ return {
 				desc = "Debug • go on/start",
 			},
 			{
+				"<leader>dd",
+				function()
+					require("dap").continue()
+				end,
+				desc = "Debug • go on/start",
+			},
+			{
 				"<F10>",
 				function()
 					require("dap").step_over()
@@ -41,7 +48,19 @@ return {
 			{
 				"<leader>dB",
 				function()
-					require("dap").set_breakpoint(vim.fn.input("Breakpoint condition > "))
+					-- require("dap").set_breakpoint(vim.fn.input("Breakpoint condition > "))
+          vim.ui.input({ prompt = "Condition " }, function(condition)
+            vim.ui.input({ prompt = "Hit count " }, function(hit)
+              vim.ui.input({prompt = "Log message " }, function (log)
+                local hit_num = tonumber(hit)
+                require("dap").set_breakpoint(
+                  condition ~= "" and condition or nil,
+                  hit_num,
+                  log ~= "" and log or nil
+                )
+              end)
+            end)
+          end)
 				end,
 				desc = "Debug • Conditional Breakpoint",
 			},
@@ -111,6 +130,7 @@ return {
 		event = "VeryLazy",
 		dependencies = {
 			"mfussenegger/nvim-dap",
+      "theHamsta/nvim-dap-virtual-text",
 			"nvim-neotest/nvim-nio",
 		},
 		opts = {
@@ -128,6 +148,8 @@ return {
 			},
 		},
 		config = function(_, opts)
+      require("nvim-dap-virtual-text").setup()
+      require("noice").setup()
 			local dap, dapui = require("dap"), require("dapui")
 			dapui.setup(opts)
 			dap.listeners.after.event_initialized["dapui_config"] = function()
