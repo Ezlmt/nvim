@@ -1,5 +1,3 @@
-local b = 123
-print(b)
 return {
 	"nvimdev/lspsaga.nvim",
 	cmd = "Lspsaga",
