@@ -7,6 +7,10 @@ return {
     bigfile = { enabled = true },
     dashboard = { enabled = true },
     explorer = { enabled = true },
+    lazygit = {
+      enabled = true,
+      configure = false,
+    },
     image = {
       enabled = true,
       doc = { inline = false, float = false, max_width = 80, max_height = 40},
