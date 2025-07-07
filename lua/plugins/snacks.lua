@@ -141,8 +141,8 @@ return {
       end,
     },
     -- custom:
-    { "<leadr>bd", function () require("snacks").bufdelete() end, desc = "[snacks] Delete buffer" },
-    { "<leadr>si", function () require("snacks").image.hover() end, desc = "[snacks] Display Image" },
+    { "<leader>bd", function () require("snacks").bufdelete() end, desc = "[snacks] Delete buffer" },
+    { "<leader>si", function () require("snacks").image.hover() end, desc = "[snacks] Display Image" },
   },
   init = function()
     vim.api.nvim_create_autocmd("User", {
@@ -168,6 +168,24 @@ return {
             vim.g.snacks_animate = state
           end
         }):map("<leader>ta")
+
+        Snacks.toggle.new({
+          id = "Explorer",
+          name = "Explorer",
+          notify = false,
+          get  = function()
+            return #Snacks.picker.get({ source = "explorer" }) > 0
+          end,
+          set  = function(state)
+            if state then
+              Snacks.explorer.open()
+            else
+              for _, p in ipairs(Snacks.picker.get({ source = "explorer" })) do
+                p:close()
+              end
+            end
+          end,
+        }):map("<leader>te")
 
         -- Create some toggle mappings
         Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>ts")

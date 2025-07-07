@@ -1,4 +1,28 @@
 return {
+  -- lazy.nvim
+  {
+    "folke/snacks.nvim",
+    ---@type snacks.Config
+    opts = {
+      dashboard = {
+        preset  = {
+          header = [[
+███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
+████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
+██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║
+██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
+██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
+╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
+  ███████╗███████╗██╗     ███╗   ███╗████████╗
+  ██╔════╝╚══███╔╝██║     ████╗ ████║╚══██╔══╝
+  █████╗    ███╔╝ ██║     ██╔████╔██║   ██║   
+  ██╔══╝   ███╔╝  ██║     ██║╚██╔╝██║   ██║   
+  ███████╗███████╗███████╗██║ ╚═╝ ██║   ██║   
+  ╚══════╝╚══════╝╚══════╝╚═╝     ╚═╝   ╚═╝   ]],
+        },
+      }
+    }
+  },
   {
     "lewis6991/gitsigns.nvim",
     event = "BufReadPost",
@@ -19,7 +43,7 @@ return {
     "echasnovski/mini.diff",
     version = "*",
     keys = {
-      { "<Leader>to", function() require("mini.diff").toggle_overlay(vim.api.nvim_get_current_buf()) end, mode = "n", desc = "[MiniDiff]"},
+      { "<leader>to", function() require("mini.diff").toggle_overlay(vim.api.nvim_get_current_buf()) end, mode = "n", desc = "[MiniDiff]"},
     },
     opts = {},
   },
@@ -31,12 +55,12 @@ return {
         search = true,
       },
       marks = {
-        Search = {
-          color = "#CBA6F7"
+        search = {
+          color = "#cba6f7"
         },
-        GitAdd = { text = "|" },
-        GitChange = { text = "|" },
-        GitDeletef = { text = "_" },
+        gitadd = { text = "|" },
+        gitchange = { text = "|" },
+        gitdeletef = { text = "_" },
 
       },
     },
