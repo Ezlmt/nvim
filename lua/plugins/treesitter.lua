@@ -6,6 +6,7 @@ return {
 		ensure_installed = { "lua", "toml", "cpp", "c", "python",
       "css",
       "latex",
+      "go",
     },
 		highlight = { enable = true },
     indent = { enable = true },
