@@ -10,6 +10,7 @@ return {
 		},
 		opts = {
 			-- configuration goes here
+			lang = "golang",
 			cn = { -- leetcode.cn
 				enabled = true, ---@type boolean
 				translator = true, ---@type boolean

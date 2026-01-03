@@ -1,10 +1,8 @@
 return {
-	cmd = {
-		vim.fn.stdpath("data") .. "/mason/bin/clangd",
+	cmd = { "clangd" },
+	init_options = {
+		fallbackFlags = { "-std=c++23" },
 	},
-  init_options = {
-    fallbackFlags ={ "-std=c++23" },
-  },
 	filetypes = { "c", "cc", "cpp", "objc", "objcpp", "cuda" },
 	root_markers = {
 		".clangd",
