@@ -100,8 +100,135 @@ Consider removing if not using unique features:
 | `lspsaga.nvim` | overlaps with snacks LSP picker (keep if you prefer its UI) |
 | `toggleterm.nvim` | snacks.terminal already provides this |
 
+---
+
+# Main Branch Specific
+
+## 7. Bugs to Fix
+
+| Issue | Location | Fix |
+|-------|----------|-----|
+| Typo `ops` → `opts` | `lua/plugins/go.lua:5` | Change `ops` to `opts` |
+| Keymap conflict | `yazi-nvim.lua` | `<leader>e` conflicts with snacks.explorer |
+| Nested plugin spec | `yazi-nvim.lua:31-37` | neo-tree config inside yazi opts is wrong |
+
+## 8. DAP Improvements
+
+### Add Rust debugging support (lua/daps/rust.lua)
+
+```lua
+local dap = require("dap")
+-- Reuse codelldb from cpp config
+dap.configurations.rust = {
+  {
+    name = "Launch",
+    type = "codelldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+    end,
+    cwd = "${workspaceFolder}",
+    stopOnEntry = false,
+  },
+}
+```
+
+Then add `require("daps.rust")` to `lua/daps/init.lua`.
+
+### DAP keymaps enhancement
+
+```lua
+-- Add to dap.lua keys section:
+{ "<leader>du", function() require("dapui").toggle() end, desc = "Debug • Toggle UI" },
+{ "<leader>de", function() require("dapui").eval() end, desc = "Debug • Eval", mode = { "n", "v" } },
+{ "<leader>dt", function() require("dap").terminate() end, desc = "Debug • Terminate" },
+```
+
+## 9. Yazi Config Fix
+
+Current config has issues - fix to:
+
+```lua
+return {
+  "mikavilpas/yazi.nvim",
+  event = "VeryLazy",
+  dependencies = { "folke/snacks.nvim" },
+  keys = {
+    { "<leader>-", "<cmd>Yazi<cr>", mode = { "n", "v" }, desc = "Yazi (current file)" },
+    { "<leader>yc", "<cmd>Yazi cwd<cr>", desc = "Yazi (cwd)" },  -- Changed from <leader>e
+    { "<leader>yl", "<cmd>Yazi toggle<cr>", desc = "Yazi resume" },
+  },
+  opts = {
+    open_for_directories = false,
+    keymaps = { show_help = "<f1>" },
+  },
+}
+```
+
+## 10. LSP Server Improvements
+
+### tsserver → ts_ls (Deprecated)
+
+`tsserver` is deprecated, rename to `ts_ls`:
+- Rename `lsp/tsserver.lua` → `lsp/ts_ls.lua`
+- Update `init.lua`: change `"tsserver"` to `"ts_ls"` in `vim.lsp.enable()`
+
+### Add more LSP servers (optional)
+
+| Server | Language | Config |
+|--------|----------|--------|
+| `pyright` | Python | Standard config |
+| `jsonls` | JSON | With schemastore |
+| `yamlls` | YAML | With schemastore |
+
+## 11. Image.nvim Optimization
+
+Current `cond` function is good but can add fallback message:
+
+```lua
+cond = function()
+  if vim.g.neovide then
+    return false  -- snacks.image handles this in Neovide
+  end
+  local term = os.getenv("TERM") or ""
+  return term:match("kitty") or term:match("wezterm")
+end,
+```
+
+## 12. Mason ensure_installed
+
+Consolidate all mason tools in one place (`mason.lua`):
+
+```lua
+opts = {
+  ensure_installed = {
+    -- LSP
+    "lua-language-server",
+    "typescript-language-server",
+    "gopls",
+    "rust-analyzer",
+    -- Formatters
+    "stylua",
+    "prettier",
+    "goimports",
+    -- DAP
+    "codelldb",
+  },
+},
+```
+
+---
+
 ## Priority
 
+### Basic branch (shared)
 1. **High**: Basic settings (#1) - improves stability
 2. **Medium**: Keymaps (#2), LSP keymaps (#5) - improves workflow
 3. **Low**: Treesitter (#3), Conform (#4), Cleanup (#6) - nice to have
+
+### Main branch specific
+1. **High**: Fix bugs (#7) - typos, keymap conflicts
+2. **High**: tsserver deprecation (#10) - rename to ts_ls
+3. **Medium**: DAP improvements (#8) - add Rust debugging
+4. **Medium**: Yazi config fix (#9)
+5. **Low**: Mason consolidation (#12), Image.nvim (#11)
