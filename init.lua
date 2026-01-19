@@ -6,6 +6,7 @@ vim.lsp.enable({
 	"clangd",
 	"gopls",
 	"tsserver",
+	"rust_analyzer",
 })
 
 vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#7f849c" })
