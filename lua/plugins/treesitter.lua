@@ -7,6 +7,7 @@ return {
       "css",
       "latex",
       "go",
+      "rust",
     },
 		highlight = { enable = true },
     indent = { enable = true },
