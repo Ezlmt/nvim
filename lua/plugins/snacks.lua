@@ -39,7 +39,7 @@ return {
     },
     picker = { enabled = true },
     quickfile = { enabled = true },
-    scope = { eniabled = true },
+    scope = { enabled = true },
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
@@ -55,7 +55,7 @@ return {
     { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>n", function() Snleaderblacks.picker.notifications() end, desc = "Notification History" },
+    { "<leader>n",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
     { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
@@ -73,7 +73,6 @@ return {
     { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
     { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
     -- Grep
-    { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
     { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
     { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
@@ -112,7 +111,6 @@ return {
     { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
     { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
     { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
-    { "<leader>n",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
     { "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete Buffer" },
     { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
@@ -141,7 +139,6 @@ return {
       end,
     },
     -- custom:
-    { "<leader>bd", function () require("snacks").bufdelete() end, desc = "[snacks] Delete buffer" },
     { "<leader>si", function () require("snacks").image.hover() end, desc = "[snacks] Display Image" },
   },
   init = function()

@@ -50,7 +50,7 @@ return {
   {
     "petertriho/nvim-scrollbar",
     opts = {
-      handelers = {
+      handlers = {
         gitsigns = true,
         search = true,
       },
