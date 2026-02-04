@@ -16,5 +16,6 @@ return {
 		{ "<leader>lR", ":Lspsaga finder<CR>", desc = "Finder" },
 		{ "<leader>ln", ":Lspsaga diagnostic_jump_next<CR>", desc = "Diagnostic jump next" },
 		{ "<leader>lp", ":Lspsaga diagnostic_jump_prev<CR>", desc = "Diagnostic jump prev" },
+		{ "<leader>ll", ":Lspsaga show_line_diagnostics<CR>", desc = "Show line diagnostics" },
 	},
 }
