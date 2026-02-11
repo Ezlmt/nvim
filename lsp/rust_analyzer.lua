@@ -14,6 +14,16 @@ return {
 			cargo = {
 				allFeatures = true,
 			},
+			inlayHints = {
+				bindingModeHints = { enable = true },
+				chainingHints = { enable = true },
+				closingBraceHints = { enable = true },
+				closureCaptureHints = { enable = true },
+				closureReturnTypeHints = { enable = "always" },
+				lifetimeElisionHints = { enable = "always" },
+				parameterHints = { enable = true },
+				typeHints = { enable = true },
+			},
 		},
 	},
 }
