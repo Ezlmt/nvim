@@ -14,6 +14,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		if ok and blink.get_lsp_capabilities then
 			client.capabilities = vim.tbl_deep_extend("force", client.capabilities or {}, blink.get_lsp_capabilities())
 		end
+
+		-- 💡 自动启用 inlay hints
+		if client.supports_method("textDocument/inlayHint") then
+			vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+		end
 	end,
 })
 
