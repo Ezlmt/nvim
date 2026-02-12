@@ -10,7 +10,7 @@ return {
       term_colors = true,
       custom_highlights = function (colors)
         return {
-          MatchParen = { bg = colors.lavender, fg = colors.base, bold = true},
+          MatchParen = { bg = colors.surface2, fg = colors.peach, bold = true },
         }
       end,
       integrations = {
