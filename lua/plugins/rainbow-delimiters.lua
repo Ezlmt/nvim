@@ -1,6 +1,5 @@
 return {
-  "HiPhish/rainbow-delimiters.nvim",
-  submodules = false,
-  main = "rainbow-delimiters.setup",
-  opts = {}
+	"HiPhish/rainbow-delimiters.nvim",
+	dependencies = { "nvim-treesitter/nvim-treesitter" },
+	event = { "BufReadPost", "BufNewFile" },
 }
