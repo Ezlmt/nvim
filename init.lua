@@ -1,3 +1,4 @@
+vim.g.loaded_matchparen = 1
 require("core.init")
 require("daps.init")
 
