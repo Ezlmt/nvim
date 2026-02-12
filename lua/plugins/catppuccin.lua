@@ -11,6 +11,13 @@ return {
       custom_highlights = function (colors)
         return {
           MatchParen = { bg = colors.lavender, fg = colors.base, bold = true },
+          RainbowDelimiterRed = { fg = colors.flamingo },
+          RainbowDelimiterYellow = { fg = colors.sapphire },
+          RainbowDelimiterBlue = { fg = colors.teal },
+          RainbowDelimiterOrange = { fg = colors.maroon },
+          RainbowDelimiterGreen = { fg = colors.sky },
+          RainbowDelimiterViolet = { fg = colors.pink },
+          RainbowDelimiterCyan = { fg = colors.rosewater },
         }
       end,
       integrations = {
