@@ -29,7 +29,7 @@ return {
 | `lua_ls.lua` | Lua | Uses Mason path, recognizes `vim` global |
 | `clangd.lua` | C/C++ | Default `-std=c++23`, custom capabilities |
 | `gopls.lua` | Go | Custom `root_dir` for GOMODCACHE/GOROOT |
-| `tsserver.lua` | TypeScript | Standard config |
+| `ts_ls.lua` | TypeScript | Standard config |
 
 ## ADDING NEW SERVER
 

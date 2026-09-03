@@ -21,3 +21,7 @@ vim.opt.hlsearch = false
 vim.opt.showmode = false
 
 vim.opt.clipboard = "unnamedplus"
+
+vim.opt.undofile = true
+vim.opt.updatetime = 250
+vim.opt.signcolumn = "yes"

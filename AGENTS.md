@@ -27,7 +27,7 @@ nvim/
 |------|----------|-------|
 | Add plugin | `lua/plugins/<name>.lua` | Return lazy.nvim spec table |
 | Change keymap | `lua/core/keymap.lua` | Or inline in plugin spec `keys={}` |
-| Diagnostics UI | `lua/plugins/lspsage.lua` | Lspsaga mappings |
+| Diagnostics UI | `lua/plugins/lspsaga.lua` | Lspsaga mappings |
 | Terminal UX | `lua/plugins/snacks.lua` | Toggle terminal, pickers, toggles |
 | Add LSP server | `lsp/<server>.lua` + `init.lua` | Add to `vim.lsp.enable()` list |
 | LSP attach behavior | `lua/core/lsp.lua` | Formatting disabled; inlay hints auto-enable |
@@ -80,7 +80,7 @@ nvim/
 | `snacks.nvim` | Dashboard, picker, explorer, zen, terminal, toggles | `lua/plugins/snacks.lua` |
 | `blink.cmp` | Completion engine | `lua/plugins/blink.lua` |
 | `conform.nvim` | Format on save | `lua/plugins/conform.lua` |
-| `lspsaga.nvim` | LSP UI enhancements | `lua/plugins/lspsage.lua` |
+| `lspsaga.nvim` | LSP UI enhancements | `lua/plugins/lspsaga.lua` |
 | `rainbow-delimiters.nvim` | Rainbow bracket highlight (treesitter) | `lua/plugins/rainbow-delimiters.lua` |
 | `catppuccin` | Colorscheme + highlight integration | `lua/plugins/catppuccin.lua` |
 | `bufferline.nvim` | Tab bar | `lua/plugins/ui.lua` |
@@ -92,7 +92,7 @@ Enabled in `init.lua` via `vim.lsp.enable()`:
 - `lua_ls` - Lua (Mason-installed)
 - `clangd` - C/C++ (C++23 default)
 - `gopls` - Go (custom root_dir logic)
-- `tsserver` - TypeScript
+- `ts_ls` - TypeScript
 - `rust_analyzer` - Rust (inlay hints supported when rust-analyzer installed)
 
 ## NOTES

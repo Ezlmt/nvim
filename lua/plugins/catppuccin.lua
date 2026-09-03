@@ -22,13 +22,12 @@ return {
       end,
       integrations = {
         alpha = true,
-        cmp = true,
+        blink_cmp = true,
         gitsigns = true,
         lsp_trouble = true,
-        nvimtree = true,
-        telescope = true,
         notify = true,
         rainbow_delimiters = true,
+        snacks = true,
       },
     })
     vim.cmd("colorscheme catppuccin")

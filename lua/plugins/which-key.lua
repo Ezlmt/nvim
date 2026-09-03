@@ -3,18 +3,17 @@ return {
   event = 'VeryLazy',
   dependencies = { "nvim-tree/nvim-web-devicons" },
   opts = {
-    ---@type false | "calssic" | "modern" | "helix"
+    ---@type false | "classic" | "modern" | "helix"
     preset = "helix",
-    -- style: ignone
     spec = {
-      { "<leader>s", group = "<Snacks>"},
-      { "<leader>t", group = "<Snacks> Toggle"},
-      { "<leader>g", group = "git"},
-      { "<leader>l", group = "Lspsage"},
-      { "<leader>f", group = "Find"},
-      { "<leader>d", group = "Debug"},
+      { "<leader>s", group = "Snacks / Search" },
+      { "<leader>t", group = "Toggle" },
+      { "<leader>g", group = "Git" },
+      { "<leader>l", group = "Lspsaga / LSP" },
+      { "<leader>f", group = "Find" },
+      { "<leader>d", group = "Debug" },
     },
-    -- expand all nodes witgout a  description
+    -- expand all nodes without a description
     expand = function (node)
       return not node.desc
     end

@@ -6,7 +6,7 @@ vim.lsp.enable({
 	"lua_ls",
 	"clangd",
 	"gopls",
-	"tsserver",
+	"ts_ls",
 	"rust_analyzer",
 })
 

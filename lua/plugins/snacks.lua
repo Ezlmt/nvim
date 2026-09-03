@@ -11,11 +11,6 @@ return {
       enabled = true,
       configure = false,
     },
-    image = {
-      enabled = true,
-      doc = { inline = false, float = false, max_width = 80, max_height = 40},
-      math = {latex = { font_size = "small"}},
-    },
     indent = {
       enabled = true,
       animate = {
@@ -138,8 +133,6 @@ return {
         })
       end,
     },
-    -- custom:
-    { "<leader>si", function () require("snacks").image.hover() end, desc = "[snacks] Display Image" },
   },
   init = function()
     vim.api.nvim_create_autocmd("User", {
