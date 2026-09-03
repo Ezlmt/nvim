@@ -149,7 +149,6 @@ return {
 		},
 		config = function(_, opts)
       require("nvim-dap-virtual-text").setup()
-      require("noice").setup()
 			local dap, dapui = require("dap"), require("dapui")
 			dapui.setup(opts)
 			dap.listeners.after.event_initialized["dapui_config"] = function()
