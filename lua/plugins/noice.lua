@@ -1,6 +1,6 @@
 return {
   "folke/noice.nvim",
-  event = "VeryLazy",
+  lazy = false,
   dependencies = {
     "MunifTanjim/nui.nvim",
   },
@@ -21,7 +21,7 @@ return {
       smart_move = { enabled = false },
     },
     presets = {
-      bottom_search = true,           -- 搜索 / 留在底部，避免遮挡屏幕代码
+      bottom_search = false,          -- 搜索 / 也居中显示
       command_palette = false,
       long_message_to_split = false,
       inc_rename = false,
