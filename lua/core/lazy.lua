@@ -13,7 +13,7 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
--- 兼容性修复：当系统 Git 使用 reftable 格式或元数据异常时，避免 lockfile 更新触发 "commit is nil"
+-- 兼容性修复：当系统 Git 使用 reftable 格式或元数据异常时，彻底杜绝 "commit is nil" 报错
 local git_ok, Git = pcall(require, "lazy.manage.git")
 if git_ok and Git.info then
 	local orig_info = Git.info
@@ -34,7 +34,32 @@ if git_ok and Git.info then
 				end
 			end
 		end
+		-- 终极兜底：如果依然拿不到 commit（如克隆中断、空目录），避免 assert 崩溃
+		if not ret then
+			ret = {}
+		end
+		if not ret.commit then
+			local name = vim.fs.basename(repo)
+			local lock_ok, Lock = pcall(require, "lazy.manage.lock")
+			local lock_entry = (lock_ok and Lock.lock and Lock.lock[name]) or {}
+			ret.commit = lock_entry.commit or "HEAD"
+			ret.branch = ret.branch or lock_entry.branch or "main"
+		end
 		return ret
+	end
+end
+
+-- 保护 lock.update，即使写入 lockfile 出现异常也不中断 Neovim 启动与异步任务
+local lock_ok, Lock = pcall(require, "lazy.manage.lock")
+if lock_ok and Lock.update then
+	local orig_update = Lock.update
+	Lock.update = function(...)
+		local status, err = pcall(orig_update, ...)
+		if not status and err then
+			vim.schedule(function()
+				vim.notify("[lazy] lockfile 更新提示: " .. tostring(err), vim.log.levels.WARN)
+			end)
+		end
 	end
 end
 
@@ -43,3 +68,4 @@ require("lazy").setup({
 		{ import = "plugins" },
 	},
 })
+
