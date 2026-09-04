@@ -13,54 +13,132 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
--- 兼容性修复：当系统 Git 使用 reftable 格式或元数据异常时，彻底杜绝 "commit is nil" 报错
-local git_ok, Git = pcall(require, "lazy.manage.git")
-if git_ok and Git.info then
+-- 兼容性修复：针对系统 Git 使用 reftable 存储、detached HEAD 或元数据异常
+-- 使用 package.loaders 注入持久拦截，即便 lazy 在重载模块时清空 package.loaded 也依然生效
+local function patch_git(Git)
+	if not Git or Git._patched then
+		return Git
+	end
+	Git._patched = true
+
 	local orig_info = Git.info
 	Git.info = function(repo, details)
-		local ret = orig_info(repo, details)
-		if not ret or not ret.commit then
+		local ok, ret = pcall(orig_info, repo, details)
+		if not ok or not ret or not ret.commit then
+			ret = (ok and ret) or {}
 			local out = vim.fn.system({ "git", "-C", repo, "rev-parse", "HEAD" })
 			if vim.v.shell_error == 0 then
 				local commit = vim.trim(out)
 				if commit ~= "" then
-					local b_out = vim.fn.system({ "git", "-C", repo, "rev-parse", "--abbrev-ref", "HEAD" })
-					local branch = (vim.v.shell_error == 0 and vim.trim(b_out) ~= "HEAD") and vim.trim(b_out) or "main"
-					ret = ret or {}
 					ret.commit = commit
-					if not ret.branch or ret.branch == ".invalid" then
-						ret.branch = branch
+					local b_out = vim.fn.system({ "git", "-C", repo, "rev-parse", "--abbrev-ref", "HEAD" })
+					if vim.v.shell_error == 0 and vim.trim(b_out) ~= "" and vim.trim(b_out) ~= "HEAD" then
+						ret.branch = vim.trim(b_out)
 					end
 				end
 			end
 		end
-		-- 终极兜底：如果依然拿不到 commit（如克隆中断、空目录），避免 assert 崩溃
-		if not ret then
-			ret = {}
-		end
-		if not ret.commit then
+
+		-- 兜底：如果仍然缺少 commit 或 branch，彻底杜绝 assert 崩溃
+		ret = ret or {}
+		if not ret.commit or ret.commit == "" then
 			local name = vim.fs.basename(repo)
 			local lock_ok, Lock = pcall(require, "lazy.manage.lock")
 			local lock_entry = (lock_ok and Lock.lock and Lock.lock[name]) or {}
 			ret.commit = lock_entry.commit or "HEAD"
 			ret.branch = ret.branch or lock_entry.branch or "main"
 		end
+		if not ret.branch or ret.branch == "" or ret.branch == ".invalid" then
+			ret.branch = "main"
+		end
 		return ret
 	end
+
+	local orig_branch = Git.get_branch
+	Git.get_branch = function(plugin)
+		local ok, b = pcall(orig_branch, plugin)
+		if ok and b and type(b) == "string" and b ~= "" then
+			return b
+		end
+		local b_out = vim.fn.system({ "git", "-C", plugin.dir, "rev-parse", "--abbrev-ref", "HEAD" })
+		if vim.v.shell_error == 0 and vim.trim(b_out) ~= "" and vim.trim(b_out) ~= "HEAD" then
+			return vim.trim(b_out)
+		end
+		return plugin.branch or "main"
+	end
+
+	return Git
 end
 
--- 保护 lock.update，即使写入 lockfile 出现异常也不中断 Neovim 启动与异步任务
-local lock_ok, Lock = pcall(require, "lazy.manage.lock")
-if lock_ok and Lock.update then
+local function patch_lock(Lock)
+	if not Lock or Lock._patched then
+		return Lock
+	end
+	Lock._patched = true
+
 	local orig_update = Lock.update
 	Lock.update = function(...)
 		local status, err = pcall(orig_update, ...)
 		if not status and err then
-			vim.schedule(function()
-				vim.notify("[lazy] lockfile 更新提示: " .. tostring(err), vim.log.levels.WARN)
+			-- 如果写入 lockfile 出错，用纯安全方式生成完整 lockfile，避免 lockfile 损坏为 "{\n"
+			pcall(function()
+				local Config = require("lazy.core.config")
+				local Git = require("lazy.manage.git")
+				vim.fn.mkdir(vim.fn.fnamemodify(Config.options.lockfile, ":p:h"), "p")
+				local f = io.open(Config.options.lockfile, "w")
+				if not f then
+					return
+				end
+				f:write("{\n")
+				local lines = {}
+				for name, plugin in pairs(Config.plugins or {}) do
+					if not plugin._.is_local and plugin._.installed then
+						local info = Git.info(plugin.dir) or {}
+						local commit = info.commit or (Lock.lock and Lock.lock[name] and Lock.lock[name].commit) or "HEAD"
+						local branch = info.branch or plugin.branch or "main"
+						table.insert(lines, ([[  %q: { "branch": %q, "commit": %q }]]):format(name, branch, commit))
+					end
+				end
+				table.sort(lines)
+				f:write(table.concat(lines, ",\n"))
+				f:write("\n}\n")
+				f:close()
 			end)
 		end
 	end
+
+	return Lock
+end
+
+-- 注入 package.loaders
+table.insert(package.loaders, 1, function(modname)
+	if modname == "lazy.manage.git" then
+		return function()
+			for i = 2, #package.loaders do
+				local fn = package.loaders[i](modname)
+				if type(fn) == "function" then
+					return patch_git(fn(modname))
+				end
+			end
+		end
+	elseif modname == "lazy.manage.lock" then
+		return function()
+			for i = 2, #package.loaders do
+				local fn = package.loaders[i](modname)
+				if type(fn) == "function" then
+					return patch_lock(fn(modname))
+				end
+			end
+		end
+	end
+end)
+
+-- 如果模块已提前加载，立即应用 patch
+if package.loaded["lazy.manage.git"] then
+	patch_git(package.loaded["lazy.manage.git"])
+end
+if package.loaded["lazy.manage.lock"] then
+	patch_lock(package.loaded["lazy.manage.lock"])
 end
 
 require("lazy").setup({
@@ -68,4 +146,5 @@ require("lazy").setup({
 		{ import = "plugins" },
 	},
 })
+
 

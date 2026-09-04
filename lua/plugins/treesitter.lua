@@ -1,5 +1,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
+	branch = "master",
 	event = "VeryLazy",
 	main = "nvim-treesitter.configs",
 	opts = {
