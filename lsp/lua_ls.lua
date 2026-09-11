@@ -1,7 +1,11 @@
+local lua_cmd = "lua-language-server"
+local mason_lua = vim.fn.stdpath("data") .. "/mason/bin/lua-language-server"
+if vim.fn.executable(mason_lua) == 1 then
+	lua_cmd = mason_lua
+end
+
 return {
-	cmd = {
-		vim.fn.stdpath("data") .. "/mason/bin/lua-language-server",
-	},
+	cmd = { lua_cmd },
 	filetypes = { "lua" },
 
 	root_markers = {
