@@ -1,0 +1,208 @@
+*jetski.txt*    Seamless Jetski AI Integration for Neovim (Cider-J Parity)
+
+==============================================================================
+CONTENTS                                                      *jetski-contents*
+
+    1. Introduction .......................................... |jetski-intro|
+    2. Requirements .......................................... |jetski-requirements|
+    3. Quick Start & Setup ................................... |jetski-setup|
+    4. Commands Reference .................................... |jetski-commands|
+    5. Keymaps Reference ..................................... |jetski-keymaps|
+    6. Features & Cider-J Parity ............................. |jetski-features|
+       6.1 Terminal & Panel Layouts .......................... |jetski-layout|
+       6.2 Context Extraction (Explain, Refactor, Test) ...... |jetski-context|
+       6.3 Diagnostics & Compiler Fixes ...................... |jetski-diagnostics|
+       6.4 Inline Line Comments & Review ..................... |jetski-comments|
+       6.5 Interactive Diff Review (Accept / Reject) ......... |jetski-diff|
+       6.6 Artifacts, Plans, & Walkthroughs .................. |jetski-artifacts|
+       6.7 CitC & Google3 Workspace Awareness ................ |jetski-workspace|
+    7. Configuration Options ................................. |jetski-config|
+    8. Health Check .......................................... |jetski-health|
+
+==============================================================================
+1. INTRODUCTION                                                  *jetski-intro*
+
+jetski.nvim brings Google's Jetski AI agent directly into Neovim with full
+feature parity with Cider-J.
+
+While previous editor scripts only opened a dumb terminal running the CLI,
+jetski.nvim is a complete, two-way agentic IDE integration:
+
+- Bi-directional Neovim RPC: Jetski opens files, displays diffs, and navigates
+  directly in your active Neovim windows.
+- In-Editor Code Review: Leave comments on lines or ranges with gutter signs
+  (💬), and submit batch review requests to Jetski in a single keystroke.
+- Diagnostic Autofix: Detects compiler and LSP errors (clangd, pyright,
+  Tricorder) and prompts Jetski to fix them automatically.
+- Interactive Diff Review: Side-by-side diff review with one-key Accept
+  (:JetskiAccept / <leader>ya) or Reject (:JetskiReject / <leader>yr).
+- Artifacts & Plans: Seamless viewing of implementation plans and walkthroughs.
+- Google3 / CitC Native: Detects CitC client paths and depot paths automatically.
+
+==============================================================================
+2. REQUIREMENTS                                           *jetski-requirements*
+
+- Neovim >= 0.10.0 (0.11+ recommended)
+- Jetski CLI binary:
+  /google/bin/releases/jetski-devs/tools/cli (auto-detected) or `jetski` on PATH.
+
+==============================================================================
+3. QUICK START & SETUP                                          *jetski-setup*
+
+Using lazy.nvim: >lua
+    {
+      "jetski",
+      dir = "/google/src/cloud/<user>/<ws>/google3/experimental/users/<user>/jetski.nvim",
+      opts = {
+        open_mode = "vertical", -- "vertical", "horizontal", "float", "tab"
+        keymap_prefix = "<leader>J", -- Prevents collision with Jujutsu <leader>j
+      },
+    }
+<
+Call setup in your configuration: >lua
+    require("jetski").setup({
+      open_mode = "vertical",
+      vertical = { side = "right", width = 0.45 },
+      auto_revert = true,
+      preload = true,
+    })
+<
+==============================================================================
+4. COMMANDS REFERENCE                                        *jetski-commands*
+
+:Jetski [prompt]            Toggle or open Jetski panel, optionally with prompt.
+:JetskiToggle               Toggle panel visibility without killing process.
+:JetskiNew [prompt]         Start a new fresh Jetski session.
+:JetskiContinue [prompt]    Resume the last conversation.
+:JetskiKill                 Terminate active session process.
+:JetskiStatus               Show status of process, workspace, and comments.
+:JetskiPreload              Warm up Jetski CLI in a hidden background buffer.
+
+:JetskiAsk [query]          Ask Jetski a question with attached buffer/selection.
+:JetskiExplain              Explain selected code or current function.
+:JetskiRefactor [guidance]  Refactor selected code with optional guidance.
+:JetskiFix [!]              Fix diagnostics (compiler/LSP/Tricorder) in buffer.
+                            Use [!] to restrict to current cursor line.
+:JetskiTest                 Generate unit tests for selected code.
+
+:JetskiComment              Add or edit inline comment on current line or range.
+:JetskiCommentDelete        Delete comment on current line.
+:JetskiCommentList          List all pending comments in quickfix.
+:JetskiCommentSubmit        Submit all pending comments to Jetski.
+:JetskiCommentClear         Clear all comments and gutter signs.
+
+:JetskiDiff [file]          Review diff of agent modifications side-by-side.
+:JetskiAccept [file]        Accept all agent edits for the file.
+:JetskiReject [file]        Reject agent edits and revert to pre-edit state.
+
+:JetskiPlan [file]          Open latest implementation plan artifact.
+:JetskiWalkthrough [file]   Open latest walkthrough artifact.
+:JetskiArtifacts            Browse and open session artifacts.
+:JetskiUpdateSkill          Copy bundled SKILL.md to ~/.gemini/jetski/skills/nvim/
+
+==============================================================================
+5. KEYMAPS REFERENCE                                          *jetski-keymaps*
+
+Default keybindings (prefixed with <leader>J to avoid clashing with Jujutsu):
+
+Normal Mode:
+    <leader>Jj      Toggle Jetski panel
+    <leader>Jn      Start new Jetski session
+    <leader>Jk      Continue last Jetski session
+    <leader>Ja      Ask Jetski (with buffer context)
+    <leader>Je      Explain code
+    <leader>Jr      Refactor code
+    <leader>Jf      Fix diagnostics/compiler errors
+    <leader>Jt      Generate unit tests
+    <leader>Jc      Add/edit comment on current line
+    <leader>Jd      Delete comment on current line
+    <leader>Jl      List pending comments
+    <leader>Js      Submit all comments to Jetski
+    <leader>JC      Clear all comments
+    <leader>Jp      Open implementation plan
+    <leader>Jw      Open walkthrough
+    <leader>JA      Browse session artifacts
+    <leader>yd      Review agent diff
+    <leader>ya      Accept agent diff edits
+    <leader>yr      Reject agent diff edits
+
+Visual Mode:
+    <leader>Ja      Ask Jetski with selected code
+    <leader>Je      Explain selected code
+    <leader>Jr      Refactor selected code
+    <leader>Jt      Generate unit tests for selected code
+    <leader>Jc      Add comment on selected line range
+
+Terminal Mode:
+    <Esc><Esc>      Exit terminal mode to normal window navigation (<C-\><C-n>)
+    <Esc>           Passed directly to Jetski CLI (for menus/cancel)
+
+==============================================================================
+6. FEATURES & CIDER-J PARITY                                 *jetski-features*
+
+6.1 TERMINAL & PANEL LAYOUTS                                   *jetski-layout*
+Configurable open_mode ("vertical", "horizontal", "float", "tab").
+Closing the window (:JetskiToggle) does NOT kill the session; reopening resumes
+instantly.
+
+6.2 CONTEXT EXTRACTION                                        *jetski-context*
+Captures active buffer filename, relative path in CitC, line numbers, cursor
+position, and selected code automatically.
+
+6.3 DIAGNOSTICS & COMPILER FIXES                           *jetski-diagnostics*
+Pulls diagnostics from Neovim's LSP client and linters (clangd, pyright,
+Tricorder), formats error messages and surrounding lines, and prompts Jetski to
+resolve them.
+
+6.4 INLINE LINE COMMENTS & REVIEW                             *jetski-comments*
+Full parity with Cider-J's CommentsManager:
+Leave comments on arbitrary lines or ranges. Gutter sign (💬) and virtual text
+mark commented lines. Submit all comments in batch as structured JSON.
+
+6.5 INTERACTIVE DIFF REVIEW                                      *jetski-diff*
+Full parity with Cider-J's AgentEditManager:
+When the agent updates files, review changes side-by-side with original
+pre-edit snapshots. Accept with :JetskiAccept (<leader>ya) or reject and
+restore with :JetskiReject (<leader>yr).
+
+6.6 ARTIFACTS, PLANS, & WALKTHROUGHS                        *jetski-artifacts*
+Automatically locates session artifacts in ~/.gemini/jetski/brain/ or the
+workspace and opens them in formatted markdown buffers.
+
+==============================================================================
+7. CONFIGURATION OPTIONS                                       *jetski-config*
+
+Pass options to `require("jetski").setup(opts)`: >lua
+    {
+      cmd = "",                      -- CLI binary path (auto-detected if empty)
+      agent = nil,                   -- Custom agent name
+      model = nil,                   -- Model override (e.g. "gemini-2.5-pro")
+      open_mode = "vertical",        -- "vertical" | "horizontal" | "float" | "tab"
+      vertical = { side = "right", width = 0.45 },
+      horizontal = { side = "below", height = 0.38 },
+      float = { width = 0.85, height = 0.85, border = "rounded" },
+      auto_revert = true,            -- Auto-reload modified buffers
+      preload = true,                -- Preload CLI in background on startup
+      kill_on_exit = true,           -- Kill process/buffer when Neovim exits
+      auto_close = true,             -- Close window & buffer when process exits
+      keymap_prefix = "<leader>J",   -- Prefix for default keymaps
+      enable_default_keymaps = true, -- Set false to disable default mappings
+      comments = {
+        sign = "💬",
+        virtual_text = true,
+        auto_clear_on_submit = true,
+      },
+      diff = {
+        layout = "vertical",
+        auto_accept_on_commit = true,
+      },
+    }
+<
+==============================================================================
+8. HEALTH CHECK                                               *jetski-health*
+
+Run `:checkhealth jetski` to inspect CLI binary availability, Neovim RPC
+socket status, CitC workspace detection, and companion skill installation.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

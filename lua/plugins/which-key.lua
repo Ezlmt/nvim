@@ -6,12 +6,14 @@ return {
     ---@type false | "classic" | "modern" | "helix"
     preset = "helix",
     spec = {
+      { "<leader>a", group = "AI (Jetski)" },
       { "<leader>s", group = "Snacks / Search" },
       { "<leader>t", group = "Toggle" },
       { "<leader>g", group = "Git" },
       { "<leader>l", group = "Lspsaga / LSP" },
       { "<leader>f", group = "Find" },
       { "<leader>d", group = "Debug" },
+      { "<leader>y", group = "Diff Review" },
     },
     -- expand all nodes without a description
     expand = function (node)
